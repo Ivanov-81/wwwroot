@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>test</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" 
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    test test
+    <form runat="server" EnableViewState=False>
+        <div class="form-group" style="margin: 20px; background: darkgray;padding: 20px">
+            <label for="fileaudi">Аудио контент:</label>
+            <input type="file" class="form-control" id="fileaudi" />
+
+            <label for="polygon">Замкнутый полигон:</label>
+            <input type="text" class="form-control" id="polygon" value="54.38638168417807 20.641097124090724|54.386590977409774 20.64169793888238|54.38629109423934 20.6418159560736|54.38615677085869 20.641295607548685|54.38638168417807 20.641097124090724" /><br />
+            <button class="form-control" type="button" style="width: 200px" onclick="upload()">Add</button>
+        </div>
+
+</form>
+
+<form runat="server" EnableViewState=False>
+    <div class="form-group" style="margin: 20px; background: darkgray;padding: 20px">
+
+        <label for="pointX">X:</label>
+        <input type="text" class="form-control" id="pointX" value="54.386406670504755" />
+        <label for="pointX">Y:</label>
+        <input type="text" class="form-control" id="pointY" value="20.641483336692154" />
+        <br/>
+        <button class="form-control" type="button" style="width: 200px" onclick="exist()">Exist</button>
+    </div>
+
+</form>
+    <script type="text/javascript">
+        var upload = function () {
+            var file_data = window.$('#fileaudi').prop('files')[0];
+            var form_data = new FormData();
+            form_data.append('file', file_data);
+            form_data.append('polygon', window.$("#polygon").val());
+            form_data.append('locale', 'ru');
+            alert("Вставка полигона, и приязанного к нему файла");
+            window.$.ajax({
+                url: '/gis',
+                cache: false,
+                contentType: false,
+                processData: false,
+                data: form_data,
+                type: 'post',
+                async: true,
+                success: function (data) {
+                    alert(data);
+                },
+                error: function (error) {
+                    alert(error);
+                },
+
+            });
+        };
+
+        var exist = function () {
+           
+            var o = new Object();
+            o.locale='ru';
+            o.x=$("#pointX").val();
+            o.y=$("#pointY").val();
+            alert("Вернуть полигон, которому принадлежит точка")
+            window.$.ajax({
+                url: '/exist',
+                headers: { 
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json' 
+                },
+                cache: false,
+                dataType: 'json',
+                contentType: false,
+                processData: false,
+                data: JSON.stringify(o),
+                type: 'post',
+                async: true,
+                success: function (data) {
+                    alert(data);
+                },
+                error: function (error) {
+                    alert("error:" +error);
+                },
+
+            });
+        };
+
+    </script>
+
+</body>
+</html>
